@@ -1,0 +1,30 @@
+主评审复核记录.md
+  s_eaf7f432c40395::t_d78c2066b2fff6 19
+QCon26上海站分享材料质量分析报告.md
+  s_eaf7f432c40395::t_678c3f42f705c9 3686-3688,3690-3693
+  s_eaf7f432c40395::t_7690948875c30e 3-6
+QCon26上海站分享材料质量分析报告.html
+  s_eaf7f432c40395::t_c0d77b369f5d61 18-22,7965,7967-7970
+README.md
+  s_eaf7f432c40395::t_b2db77de283001 21
+  s_eaf7f432c40395::t_aef70cd738f54f 6-7
+研究依据.md
+  s_eaf7f432c40395::t_84eba688f589b7 3
+  s_eaf7f432c40395::t_c9b799fe788748 29,31-35,37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c7058c2b23cc2ca85b50072d3c6f8ef2813c09c5",
+  "prompts": {},
+  "sessions": {
+    "s_eaf7f432c40395": {
+      "agent_id": {
+        "tool": "antcc",
+        "id": "1eb790d8-7391-4ff6-af16-61095934f71b",
+        "model": "antchat/GLM-5.2"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    }
+  }
+}
