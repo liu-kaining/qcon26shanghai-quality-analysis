@@ -1,0 +1,25 @@
+index.html
+  s_eaf7f432c40395::t_c3ab191d8e2e6b 57-59
+analysis/主评审复核记录.html
+  s_eaf7f432c40395::t_d603a97dd8e783 1-54
+analysis/研究依据.html
+  s_eaf7f432c40395::t_d603a97dd8e783 1-54
+analysis/评价方案.html
+  s_eaf7f432c40395::t_d603a97dd8e783 1-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9fd527d3736d24ba395c272453048944d119ec63",
+  "prompts": {},
+  "sessions": {
+    "s_eaf7f432c40395": {
+      "agent_id": {
+        "tool": "antcc",
+        "id": "1eb790d8-7391-4ff6-af16-61095934f71b",
+        "model": "antchat/GLM-5.2"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    }
+  }
+}
