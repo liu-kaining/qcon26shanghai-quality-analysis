@@ -1,0 +1,44 @@
+README.md
+  s_eaf7f432c40395::t_573e5ecad8170b 3-38
+  s_eaf7f432c40395::t_3861615bbd7cf1 1-2
+QCon26上海站分享材料质量分析报告.html
+  s_7a7b899fe14150::t_842eb4986428bb 1-8043
+QCon26上海站分享材料质量分析报告.md
+  s_7a7b899fe14150::t_a5169015d5c0bc 1-3839
+QCon26上海站分享材料质量分析报告.pdf
+  s_7a7b899fe14150::t_6fdf743a458f1a 1-1723
+reviews.json
+  s_7a7b899fe14150::t_2f9d77a06e0417 1-11027
+scores.csv
+  s_7a7b899fe14150::t_c074808434a331 1-76
+主评审复核记录.md
+  s_7a7b899fe14150::t_d7d62e8620e181 1-21
+研究依据.md
+  s_7a7b899fe14150::t_c9344586fc93f9 1-37
+评价方案.md
+  s_7a7b899fe14150::t_dd6239cb4aa7af 1-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6bbf5b49ee33b925d6d46a9ea86b327935875173",
+  "prompts": {},
+  "sessions": {
+    "s_7a7b899fe14150": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a19b7c-998b-7593-94a4-d679af5ae5e1",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    },
+    "s_eaf7f432c40395": {
+      "agent_id": {
+        "tool": "antcc",
+        "id": "1eb790d8-7391-4ff6-af16-61095934f71b",
+        "model": "antchat/GLM-5.2"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    }
+  }
+}
