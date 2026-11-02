@@ -1,0 +1,19 @@
+index.html
+  s_eaf7f432c40395::t_2f2e3b60e1d652 1-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "78fb0059dc1bad3705a17373663ac806d1440c74",
+  "prompts": {},
+  "sessions": {
+    "s_eaf7f432c40395": {
+      "agent_id": {
+        "tool": "antcc",
+        "id": "1eb790d8-7391-4ff6-af16-61095934f71b",
+        "model": "antchat/GLM-5.2"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    }
+  }
+}
