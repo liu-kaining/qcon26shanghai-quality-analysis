@@ -1,0 +1,23 @@
+index.html
+  s_eaf7f432c40395::t_36a6142a300b8d 60-61
+analysis/reviews.html
+  s_eaf7f432c40395::t_7a426e333748f8 1-128
+analysis/scores.html
+  s_eaf7f432c40395::t_7b87215d557bbf 1-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6b0ab444558749f06753f15a9d3ae63ff531bf2e",
+  "prompts": {},
+  "sessions": {
+    "s_eaf7f432c40395": {
+      "agent_id": {
+        "tool": "antcc",
+        "id": "1eb790d8-7391-4ff6-af16-61095934f71b",
+        "model": "antchat/GLM-5.2"
+      },
+      "human_author": "kaining.lkn <kaining.lkn@antgroup.com>"
+    }
+  }
+}
