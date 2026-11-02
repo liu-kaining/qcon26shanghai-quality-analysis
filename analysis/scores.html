@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全量评分表 · QCon26 分析</title>
+<style>
+:root{--ink:#173b34;--muted:#596b64;--line:#d7dfd8;--brand:#176c59}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#f3f4ee;color:#263d35;font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:1200px;margin:30px auto;padding:30px 36px;background:white;box-shadow:0 1px 4px rgba(0,0,0,.04);min-height:80vh}
+.topbar{margin:0 0 6px;font-size:14px;color:var(--muted)}.topbar a{color:var(--brand);text-decoration:none}
+h1{font-size:26px;color:var(--ink);margin:14px 0 6px}
+.hint{color:var(--muted);font-size:13.5px;margin:0 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.bar input{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font:inherit}
+.bar .count{font-size:13px;color:var(--muted)}
+.bar button{padding:7px 12px;border:1px solid var(--line);background:#f8faf6;border-radius:6px;cursor:pointer;font:inherit;color:var(--ink)}
+.bar button:hover{border-color:var(--brand)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:78vh}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;white-space:nowrap}
+th{background:#e9efe9;font-weight:600;position:sticky;top:0;z-index:1;cursor:pointer;user-select:none}
+th:hover{color:var(--brand)}th .arr{font-size:10px;color:var(--muted);margin-left:2px}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.trunc{max-width:240px;overflow:hidden;text-overflow:ellipsis}
+td.grade{font-weight:600;text-align:center}
+tr:nth-child(even){background:#f8faf6}tr:hover{background:#eef5f0}
+.gA{color:#0f5247}.gB{color:#176c59}.gC{color:#8a6d1f}.gD{color:#a8541a}.gE{color:#a04040}
+.loading{color:var(--muted);padding:30px 0}
+@media print{.tablewrap{max-height:none}}
+</style>
+</head>
+<body>
+<main>
+<p class="topbar"><a href="../index.html">← 返回首页</a></p>
+<h1>全量评分表（75 份）</h1>
+<p class="hint">点击表头排序；搜索框按 编号 / 名称 / 主题 过滤。长文格鼠标悬停看全文。</p>
+<div class="bar">
+<input id="q" type="search" placeholder="搜索 M001 或 讲者 / 主题……">
+<span class="count" id="count"></span>
+<button id="resetSort">重置排序</button>
+</div>
+<div class="tablewrap">
+<table id="t"><thead></thead><tbody></tbody></table>
+</div>
+<div id="status" class="loading">正在读取 scores.csv……</div>
+</main>
+<script>
+const NUM=new Set(['rank','pages','P','D','E','T','R','N','S','I','score','assessed_weight','equal_weight_score','evidence_weight_score']);
+const HIDE=new Set(['filename','method_reference_candidate','flags']);
+function parseCSV(t){
+ t=t.replace(/^﻿/,'');
+ const R=[];let row=[],f='',q=false;
+ for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+  else{if(c=='"')q=true;else if(c==','){row.push(f);f='';}else if(c=='\r'){;}
+  else if(c=='\n'){row.push(f);R.push(row);row=[];f='';}else f+=c;}}
+ if(f!==''||row.length){row.push(f);R.push(row);}
+ if(R.length&&R[R.length-1].length===1&&R[R.length-1][0]==='')R.pop();
+ return R;
+}
+let headers=[],rows=[],sortKey=null,sortDir=1;
+const t_el=document.getElementById('t'),tb=t_el.querySelector('tbody'),th=t_el.querySelector('thead');
+function render(){
+ const q=document.getElementById('q').value.trim().toLowerCase();
+ let data=rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]||''])));
+ if(q)data=data.filter(r=>(r.id+' '+r.display_name+' '+r.theme+' '+r.type).toLowerCase().includes(q));
+ if(sortKey){
+  data.sort((a,b)=>{
+   let x=a[sortKey],y=b[sortKey];if(NUM.has(sortKey)){x=parseFloat(x)||0;y=parseFloat(y)||0;}
+   else{x=String(x);y=String(y);}
+   return x<y?-sortDir:x>y?sortDir:0;
+  });
+ }
+ let thd='<tr>';
+ headers.forEach(h=>{if(HIDE.has(h))return;
+  const ord=(sortKey===h)?(sortDir>0?' ↑':' ↓'):'';
+  thd+=`<th data-k="${h}">${h}<span class="arr">${ord}</span></th>`;});
+ thd+='</tr>';th.innerHTML=thd;
+ th.querySelectorAll('th').forEach(c=>c.onclick=()=>{const k=c.dataset.k;sortDir=(sortKey===k)?-sortDir:1;sortKey=k;render();});
+ let html='';
+ for(const r of data){
+  html+='<tr>';
+  headers.forEach(h=>{if(HIDE.has(h))return;let v=r[h]??'';let cls='';
+   if(NUM.has(h))cls='num';
+   else if(h==='score')cls='num';
+   else if(h==='disclosure_note')cls='trunc';
+   else if(h==='grade')cls='grade g'+(r['grade']||'');
+   if(h==='disclosure_note')html+=`<td class="${cls}" title="${v.replace(/"/g,'&quot;')}">${v}</td>`;
+   else html+=`<td class="${cls}">${v}</td>`;
+  }
+  html+='</tr>';
+ }
+ tb.innerHTML=html;
+ document.getElementById('count').textContent=`${data.length} / ${rows.length} 份`;
+}
+document.getElementById('q').addEventListener('input',render);
+document.getElementById('resetSort').addEventListener('click',()=>{sortKey=null;document.getElementById('q').value='';render();});
+fetch('scores.csv').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(t=>{
+ const all=parseCSV(t);headers=all[0];rows=all.slice(1);
+ document.getElementById('status').style.display='none';
+ render();
+}).catch(e=>{document.getElementById('status').textContent='加载失败：'+e.message;});
+</script>
+</body>
+</html>

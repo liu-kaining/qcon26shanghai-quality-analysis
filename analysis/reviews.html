@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>逐份评审记录 · QCon26 分析</title>
+<style>
+:root{--ink:#173b34;--muted:#596b64;--line:#d7dfd8;--brand:#176c59}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#f3f4ee;color:#263d35;font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:980px;margin:30px auto;padding:30px 40px;background:white;box-shadow:0 1px 4px rgba(0,0,0,.04);min-height:80vh}
+.topbar{margin:0 0 6px;font-size:14px;color:var(--muted)}.topbar a{color:var(--brand);text-decoration:none}
+h1{font-size:26px;color:var(--ink);margin:14px 0 6px}
+.hint{color:var(--muted);font-size:13.5px;margin:0 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.bar input{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font:inherit}
+.bar .count{font-size:13px;color:var(--muted)}
+.bar button,.bar select{padding:7px 12px;border:1px solid var(--line);background:#f8faf6;border-radius:6px;cursor:pointer;font:inherit;color:var(--ink)}
+.card{border:1px solid var(--line);border-radius:8px;margin:8px 0;background:white;overflow:hidden}
+.card>summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:baseline}
+.card>summary:hover{background:#f8faf6}
+.card .score{font-size:22px;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums;min-width:64px}
+.card .badge{font-size:18px;font-weight:700}
+.card .id{color:var(--muted);font-size:13px;font-family:ui-monospace,monospace}
+.card .name{flex:1;font-weight:600;color:var(--ink);min-width:200px}
+.card .meta{color:var(--muted);font-size:12.5px}
+.card[open]>summary{background:#eef5f0;border-bottom:1px solid var(--line)}
+.caret{margin-left:auto;color:var(--muted);font-size:13px}
+body{counter-reset:card}
+.btn-expand-all{cursor:pointer}
+.body{padding:8px 18px 18px}
+.body h4{color:var(--ink);margin:18px 0 6px;font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.chip{border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12.5px;background:#f8faf6}
+.chip b{color:var(--brand)}
+.reasons{margin:6px 0 0;padding:0;list-style:none}
+.reasons li{padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.reasons li b{color:var(--ink);background:#e9efe9;padding:0 5px;border-radius:3px;margin-right:6px;font-family:ui-monospace,monospace}
+.meta-row{font-size:13px;color:var(--muted);margin:8px 0}
+.meta-row b{color:var(--ink)}
+.note{background:#f0f2ed;border-left:3px solid var(--line);padding:8px 12px;margin:8px 0;font-size:13.5px;border-radius:0 4px 4px 0}
+.disc{background:#e9efe9;border-left-color:var(--brand)}
+.evidence li{margin:5px 0;font-size:13.5px}
+.evidence .pg{font-family:ui-monospace,monospace;background:#e9efe9;padding:1px 6px;border-radius:3px;font-size:12px;color:var(--ink);margin-right:6px}
+.no-res{color:var(--muted);font-size:13px;font-style:italic}
+.gA{color:#0f5247}.gB{color:#176c59}.gC{color:#8a6d1f}.gD{color:#a8541a}.gE{color:#a04040}
+.loading{color:var(--muted);padding:30px 0}
+@media(max-width:680px){main{margin:0;padding:20px}.card>summary{gap:10px}}
+</style>
+</head>
+<body>
+<main>
+<p class="topbar"><a href="../index.html">← 返回首页</a></p>
+<h1>逐份评审记录（75 份）</h1>
+<p class="hint">点 summary 行展开；搜索按 编号 / 名称；按档位筛选。</p>
+<div class="bar">
+<input id="q" type="search" placeholder="搜索 M001 或 讲者 / 主题……">
+<select id="grade"><option value="">全部档位</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select>
+<span class="btn-expand-all" id="expandAll">全部展开</span>
+<span class="count" id="count"></span>
+</div>
+<div id="list"></div>
+<div id="status" class="loading">正在读取 reviews.json……</div>
+</main>
+<script>
+const DIM={P:'问题与受众',D:'机制',E:'效果证据',T:'推理与取舍',R:'可迁移',N:'新颖/负结果',S:'结构',I:'克制'};
+function esc(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function ul(arr){if(!arr||!arr.length)return '<div class="no-res">—</div>';return '<ul>'+arr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';}
+function renderReview(r){
+ const s=r.scores||{}, sr=r.score_reasons||{};
+ const chips=Object.keys(DIM).map(k=>`<span class="chip">${k} <b>${s[k]!==undefined?s[k]:'·'}</b></span>`).join('');
+ const reasons=Object.keys(DIM).map(k=> sr[k]?`<li><b>${k}</b>${esc(sr[k])}</li>`:'').filter(x=>x).join('');
+ const ev=(r.evidence||[]).map(e=>`<li><span class="pg">p. ${(e.pages||[]).join(', ')||'—'}</span>${esc(e.finding||'')}</li>`).join('');
+ const gcls='g'+esc(r.grade||'');
+ return `
+  <details class="card" data-key="${esc((r.id+' '+r.display_name+' '+(r.theme||'')).toLowerCase())}" data-grade="${esc(r.grade||'')}">
+   <summary>
+     <span class="score">${esc(r.score!=null?r.score:'·')}</span>
+     <span class="badge ${gcls}">${esc(r.grade||'·')}</span>
+     <span class="id">${esc(r.id)}</span>
+     <span class="name">${esc(r.display_name||r.filename||'')}</span>
+     <span class="meta">${esc(r.pages!=null?r.pages+'p':'')} · ${esc(r.type||'')} · ${esc(r.theme||'')} · 置信${esc(r.confidence||'')}</span>
+     <span class="caret">▾ 展开</span>
+   </summary>
+   <div class="body">
+     ${r.summary?`<div class="note"><b>摘要：</b>${esc(r.summary)}</div>`:''}
+     <h4>八维分数</h4><div class="chips">${chips}</div>
+     ${reasons?`<h4>分项理由</h4><ul class="reasons">${reasons}</ul>`:''}
+     <h4>优点</h4>${ul(r.strengths)}
+     <h4>短板</h4>${ul(r.weaknesses)}
+     <h4>改进建议</h4>${ul(r.actions)}
+     <h4>页码证据</h4><ul class="evidence">${ev||'<li class="no-res">—</li>'}</ul>
+     ${r.confidence?`<div class="meta-row"><b>置信度：</b>${esc(r.confidence)}　${r.confidence_note?esc(r.confidence_note):''}</div>`:''}
+     ${r.evidence_observability?`<div class="meta-row"><b>效果可观察性：</b>${esc(r.evidence_observability)}</div>`:''}
+     ${r.disclosure_note?`<div class="note disc"><b>披露说明：</b>${esc(r.disclosure_note)}</div>`:''}
+     ${(r.flags&&r.flags.length)?`<div class="meta-row"><b>标记：</b>${esc(r.flags.join(' · '))}</div>`:''}
+   </div>
+  </details>`;
+}
+let data=[];
+function applyFilter(){
+ const q=document.getElementById('q').value.trim().toLowerCase();
+ const g=document.getElementById('grade').value;
+ let n=0;
+ document.querySelectorAll('.card').forEach(el=>{
+   const okQ=!q||el.dataset.key.includes(q);
+   const okG=!g||el.dataset.grade===g;
+   el.style.display=(okQ&&okG)?'':'none';
+   if(okQ&&okG)n++;
+ });
+ document.getElementById('count').textContent=`${n} / ${data.length} 份`;
+}
+fetch('reviews.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{
+ data=d;
+ document.getElementById('status').style.display='none';
+ document.getElementById('list').innerHTML=d.map(renderReview).join('');
+ applyFilter();
+}).catch(e=>{document.getElementById('status').textContent='加载失败：'+e.message;});
+document.getElementById('q').addEventListener('input',applyFilter);
+document.getElementById('grade').addEventListener('change',applyFilter);
+document.getElementById('expandAll').addEventListener('click',function(){
+ const all=document.querySelectorAll('.card');const anyClosed=[...all].some(x=>!x.open&&getComputedStyle(x).display!=='none');
+ document.querySelectorAll('.card').forEach(x=>{if(getComputedStyle(x).display!=='none')x.open=anyClosed;});
+ this.textContent=anyClosed?'全部折叠':'全部展开';
+});
+</script>
+</body>
+</html>
