@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QCon26 上海站分享材料质量分析</title>
+<style>
+:root{color-scheme:light;--ink:#173b34;--muted:#596b64;--line:#d7dfd8;--brand:#176c59}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f3f4ee;color:#263d35;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:920px;margin:40px auto;padding:42px 56px;background:white;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+h1{font-size:32px;line-height:1.35;margin:0 0 8px;color:var(--ink)}
+.sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+blockquote{border-left:4px solid var(--brand);background:#e9efe9;padding:14px 18px;margin:22px 0;color:var(--ink);border-radius:0 4px 4px 0}
+blockquote p{margin:8px 0}
+blockquote strong{color:#0f5247}
+h2{font-size:21px;margin:36px 0 14px;color:var(--ink)}
+p,ul{margin:14px 0}
+a{color:var(--brand)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:18px 0}
+.card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;background:#f8faf6;text-decoration:none;color:var(--ink);transition:border-color .15s}
+.card:hover{border-color:var(--brand)}
+.card .t{font-weight:600;display:block;margin-bottom:4px}
+.card .d{color:var(--muted);font-size:13.5px;line-height:1.6}
+.primary{background:#e9efe9;border-color:#bcd3c4}
+small{color:var(--muted)}
+ul{padding-left:20px}
+li{margin:6px 0}
+@media(max-width:680px){main{margin:0;padding:22px}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<main>
+<h1>QCon26 上海站分享材料质量分析</h1>
+<p class="sub">评估日期 2026-10-28｜方案 v1.1｜75 份材料，共 2,542 页</p>
+
+<blockquote>
+<p><strong>版权声明</strong>：被评价的分享材料版权归原作者及 <strong>QCon / 极客邦科技 InfoQ</strong> 所有。本仓库的全部内容是<strong>个人学习用途</strong>的独立内容分析，不代表 QCon / InfoQ 官方观点，与主办方无关联；不持有、不分发原 PDF / PPT，仅做学习性评述与必要摘录。</p>
+<p>原材料官方获取：大会官网 <a href="https://qcon.infoq.cn/2026/shanghai">qcon.infoq.cn/2026/shanghai</a>；材料合集 <a href="https://ppt.infoq.cn/list/173">ppt.infoq.cn/list/173</a>。</p>
+<p>如原作者或主办方认为引用不当，请联系仓库 owner，将及时调整。</p>
+</blockquote>
+
+<h2>这是做什么</h2>
+<p>一份针对 QCon26 上海站公开分享材料的内容质量分析：按自定八维指标，对 75 份材料逐份打分，并给出评语与改进建议。仅评材料中可见的内容——问题定义、机制讲解、验证设计、推理链、取舍与可迁移经验；不评现场表达、演讲感染力或视频效果。所有生产指标均标为讲者材料自述，未做日志 / 代码 / 实验复现。</p>
+
+<h2>从这里开始</h2>
+<div class="cards">
+<a class="card primary" href="analysis/QCon26上海站分享材料质量分析报告.html">
+<span class="t">完整分析报告（HTML）</span>
+<span class="d">建议先开。含目录、全量评分表、75 份逐份评语与页码证据。单文件自包含。</span>
+</a>
+<a class="card" href="analysis/QCon26上海站分享材料质量分析报告.md">
+<span class="t">报告 Markdown 源文</span>
+<span class="d">便于检索与继续编辑的报告源文。</span>
+</a>
+</div>
+
+<h2>方法与数据</h2>
+<div class="cards">
+<a class="card" href="analysis/评价方案.md"><span class="t">评价方案</span><span class="d">八维指标、权重、0–5 分锚点、分档与类型适配（自定，非官方标准）。</span></a>
+<a class="card" href="analysis/研究依据.md"><span class="t">研究依据</span><span class="d">评价方案背后的机构 / 大会原始来源与指标映射。</span></a>
+<a class="card" href="analysis/主评审复核记录.md"><span class="t">主评审复核记录</span><span class="d">全量初评后主评审对重点材料的复核与口径校准。</span></a>
+<a class="card" href="analysis/scores.csv"><span class="t">scores.csv</span><span class="d">全量评分表，表格软件可打开。</span></a>
+<a class="card" href="analysis/reviews.json"><span class="t">reviews.json</span><span class="d">逐份评审理由、页码证据与建议的结构化记录。</span></a>
+<a class="card" href="README.md"><span class="t">README</span><span class="d">仓库说明文本（同详情页所见）。</span></a>
+</div>
+
+<h2>如何解读分数</h2>
+<ul>
+<li>八维：问题与受众 A、机制 C、验证设计 D、效果证据 E、推理与取舍 T、可迁移性 M、结构 S、表达克制 X。权重见<code>评价方案.md</code>。</li>
+<li>企业审核导致未公开的数值 / 样本 / 时间 / 成本<strong>不扣分</strong>；信息限制到无法判断时记 N/A，按剩余维度已评权重归一。</li>
+<li>覆盖率不同的分数<strong>不直接做严格排名</strong>，只在相同覆盖组内解释。</li>
+</ul>
+
+<h2>边界</h2>
+<p><small>这是个人学习笔记，不是 QCon 官方评测，也不是对讲者或其公司的整体判断。原资料版权归 QCon / InfoQ 及原作者。仅评材料可见内容，所有生产指标均为讲者材料自述、未独立复现。</small></p>
+</main>
+</body>
+</html>
